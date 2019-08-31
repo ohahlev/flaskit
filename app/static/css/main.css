@@ -1,0 +1,86 @@
+.title {
+    font-weight: bold
+}
+
+.link-text {
+    color: black;
+}
+
+.afield .helper-text {
+   color: red;
+}
+    
+.admin_body {
+    padding-left: 350px;
+}
+
+.sidenav-spaced {
+    width: 350px;
+}
+
+.sidenav-spaced li {
+    margin-top: 20px;
+}
+
+.sidenav-spaced a {
+    display: block; /* Make the links appear below each other */
+    padding: 20px; /* Add some padding */
+}
+
+.icon-container {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.icon-preview {
+    text-align: center;
+}
+
+ul.horizontal-list {
+    list-style-type: none;
+    overflow: hidden;
+}
+  
+ul.horizontal-list li {
+    float: left;
+    margin-right: 20px;
+}
+
+.col-first {
+    width: 200px;
+}
+
+@media only screen and (max-device-width: 768px) {
+   .roles {
+       margin-top: 50px !important
+   }
+   .action {
+       margin-top: 50px !important
+   }
+   .col-first {
+       width: 50px;
+   }
+}
+
+p.wrapped-text {
+    line-height: 10px;
+    word-break: break-all
+}
+
+div.item {
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+}
+
+div.item .caption {
+    display: block;
+}
+
+ul.sort-arrow li:last-child {
+    margin-top: -15px;
+}
+
+ul.sort-arrow li {
+    height: 30px;
+}

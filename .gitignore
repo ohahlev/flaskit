@@ -1,0 +1,10 @@
+*.db
+*.log
+*.pyc
+config.py
+.vscode/
+.idea/
+env/
+lib/
+app/uploads/
+logs/

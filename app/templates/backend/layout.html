@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block nav %}
+<nav class="blue" role="navigation">
+    <div class="nav-wrapper container">
+        <a id="logo-container" href="/" class="brand-logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" height="60px"/>
+        </a>
+        <ul class="right hide-on-med-and-down">
+
+            {% block admin_nav %}{% endblock %}
+
+            <li>
+                <ul id="dropdown-user" class="dropdown-content">
+                    <li><a href="{{ url_for('userfe.logout') }}">Log out</a></li>
+                </ul>
+                <a class="dropdown-trigger" href="#!" data-target="dropdown-user">
+                    {{ current_user.name }}<i class="material-icons right">arrow_drop_down</i></a>
+            </li>
+        </ul>
+        <ul id="nav-mobile" class="sidenav">
+
+            {% block admin_nav_mobile %}{% endblock %}
+
+            <li>
+                <ul id="dropdown-user-mobile" class="dropdown-content">
+                    <li><a href="{{ url_for('userfe.logout') }}">Log out</a></li>
+                </ul>
+                <a class="dropdown-trigger" href="#!" data-target="dropdown-user-mobile">
+                    {{ current_user.name }}<i class="material-icons right">arrow_drop_down</i>
+                </a>
+            </li>
+        </ul>
+        <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+</nav>
+{% endblock %}
+    

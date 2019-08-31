@@ -1,0 +1,769 @@
+{% extends "backend/user/layout.html" %}
+
+{% block jumbotron %}
+
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+        <h5 class="header center orange-text">Search for users</h5>
+        <div class="row center">
+            <nav>
+                <div class="nav-wrapper white">
+                    <form method="post" action="{{ url_for('userbe.search_users') }}">
+                        <input type="hidden" name="sorted_by" value="last_updated" />
+                        <input type="hidden" name="sorted_as" value="desc" />
+                        <input type="hidden" name="name_to_filter" value="{{ name_to_filter }}" />
+                        <input type="hidden" name="email_to_filter" value="{{ email_to_filter }}" />
+                        <input type="hidden" name="phone_to_filter" value="{{ phone_to_filter }}" />
+                        <input type="hidden" name="role_to_filter" value="{{ role_to_filter }}" />
+                        <div class="input-field">
+                            <input id="search" type="search" name="keyword" value="{{ keyword if keyword != empty_hash else '' }}" />
+                            <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                            <i class="material-icons">close</i>
+                        </div>
+                    </form>
+                </div>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="left">
+                <form method="post" action="{{ url_for('userbe.advance_search_users') }}">
+                    <input type="hidden" name="keyword" value="{{ keyword }}" />
+                    <input type="hidden" name="sorted_by" value="last_updated" />
+                    <input type="hidden" name="sorted_as" value="desc" />
+                    <ul class="collapsible">
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">youtube_searched_for</i>Advance Search
+                            </div>
+                            <div class="collapsible-body">
+                        <span>
+                            <div class="row">
+
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        {% if is_advanced == True and id_to_filter != empty_hash %}
+                                        <input id="by_id" type="text" name="id_to_filter" value="{{ id_to_filter }}" />
+                                        {% else %}
+                                        <input id="by_id" type="text" name="id_to_filter" />
+                                        {% endif %}
+                                        <label for="by_id">By ID</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                        {% if is_advanced == True and name_to_filter != empty_hash %}
+                                        <input id="by_name" type="text" name="name_to_filter"
+                                               value="{{ name_to_filter }}" />
+                                        {% else %}
+                                        <input id="by_name" type="text" name="name_to_filter" />
+                                        {% endif %}
+                                        <label for="by_name">By Name</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        {% if is_advanced == True and email_to_filter != empty_hash %}
+                                        <input id="by_email" type="text" name="email_to_filter"
+                                               value="{{ email_to_filter }}" />
+                                        {% else %}
+                                        <input id="by_email" type="text" name="email_to_filter" />
+                                        {% endif %}
+                                        <label for="by_email">By Email</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                        {% if is_advanced == True and phone_to_filter != empty_hash %}
+                                        <input id="by_phone" type="text" name="phone_to_filter"
+                                               value="{{ phone_to_filter }}" />
+                                        {% else %}
+                                        <input id="by_phone" type="text" name="phone_to_filter" />
+                                        {% endif %}
+                                        <label for="by_phone">By Phone</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <select name="confirmed_to_filter">
+                                            <option value="{{ empty_hash }}" selected>ALL</option>
+                                            {% for confirmed in confirmeds %}
+                                            {% if confirmed == True %}
+                                            {% if is_advanced == True and confirmed_to_filter == "1" %}
+                                            <option value="1" selected>YES</option>
+                                            {% else %}
+                                            <option value="1">YES</option>
+                                            {% endif %}
+                                            {% elif is_advanced == True and confirmed_to_filter == "0" %}
+                                            <option value="0" selected>NO</option>
+                                            {% else %}
+                                            <option value="0">NO</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <label>By Confirmed</label>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <select name="deleted_to_filter">
+                                            <option value="{{ empty_hash }}" selected>ALL</option>
+                                            {% for deleted in deleteds %}
+                                            {% if deleted == True %}
+                                            {% if is_advanced == True and deleted_to_filter == "1" %}
+                                            <option value="1" selected>YES</option>
+                                            {% else %}
+                                            <option value="1">YES</option>
+                                            {% endif %}
+                                            {% elif is_advanced == True and deleted_to_filter == "0" %}
+                                            <option value="0" selected>NO</option>
+                                            {% else %}
+                                            <option value="0">NO</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <label>By Deleted</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <select name="role_to_filter">
+                                            <option value="{{ empty_hash }}" selected>ALL</option>
+                                            {% for role in roles %}
+                                            {% if is_advanced == True and role.name == role_to_filter %}
+                                            <option value="{{ role.name }}" selected>{{ role.name }}</option>
+                                            {% else %}
+                                            <option value="{{ role.name }}">{{ role.name }}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <label>By Role</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <button class="waves-effect waves-light btn"><i
+                                            class="material-icons left">search</i>search</button>
+                                </div>
+
+                            </div>
+                        </span>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="left">
+        <a class="waves-effect waves-light btn" href="{{ url_for('userbe.create_user') }}"><i
+                class="material-icons right">add</i>Create new user
+        </a>
+    </div>
+</div>
+
+<div class="card-panel scrollable">
+    <table class="striped my-table">
+        <thead class="light-blue lighten-5 card-panel">
+        <tr>
+            {% if is_advanced == 1 %}
+            <form method="post" action="{{ url_for('userbe.advance_search_users') }}" class="form-search-by-header">
+                {% else %}
+                <form method="post" action="{{ url_for('userbe.search_users') }}" class="form-search-by-header">
+                    {% endif %}
+                    <input type="hidden" name="keyword" value="{{ keyword }}" />
+                    <input type="hidden" class="sorted_by" name="sorted_by" value="" />
+                    <input type="hidden" class="sorted_as" name="sorted_as" value="" />
+                    <input type="hidden" name="id_to_filter" value="{{ id_to_filter }}" />
+                    <input type="hidden" name="name_to_filter" value="{{ name_to_filter }}" />
+                    <input type="hidden" name="email_to_filter" value="{{ email_to_filter }}" />
+                    <input type="hidden" name="phone_to_filter" value="{{ phone_to_filter }}" />
+                    <input type="hidden" name="confirmed_to_filter" value="{{ confirmed_to_filter }}" />
+                    <input type="hidden" name="deleted_to_filter" value="{{ deleted_to_filter }}" />
+                    <input type="hidden" name="role_to_filter" value="{{ role_to_filter }}" />
+
+                    <th style="padding-left: 20px;">
+                        <div class="row valign-wrapper">
+                            <div>ID</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-id-asc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "id" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-id-desc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "id" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th width="50px">
+                        <div class="row valign-wrapper">
+                            <div>Photo</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-photo-asc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "photo" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-photo-desc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "photo" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th width="50px">
+                        <div class="row valign-wrapper">
+                            <div>Create Date</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-create-date-asc"
+                                            type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "date_created" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-create-date-desc"
+                                            type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "date_created" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th width="50px">
+                        <div class="row valign-wrapper">
+                            <div>Last Update</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-last-update-asc"
+                                            type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "last_updated" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-last-update-desc"
+                                            type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "last_updated" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th width="50px">
+                        <div class="row valign-wrapper">
+                            <div>Name</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-name-asc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "name" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-name-desc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "name" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th width="50px">
+                        <div class="row valign-wrapper">
+                            <div>Email</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-email-asc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "email" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-email-desc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "email" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th width="50px">
+                        <div class="row valign-wrapper">
+                            <div>Phone</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-phone-asc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "phone" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-phone-desc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "phone" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="row valign-wrapper">
+                            <div>Confirmed</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-confirmed-asc"
+                                            type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "confirmed" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-confirmed-desc"
+                                            type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "confirmed" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="row valign-wrapper">
+                            <div>Deleted</div>
+                            <ul>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-deleted-asc" type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "deleted" and sorted_as == "asc" %}
+                                            <font color="red">arrow_upward</font>
+                                            {% else %}
+                                            arrow_upward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn-flat waves-effect waves-light btn-deleted-desc"
+                                            type="button">
+                                        <i class="material-icons small">
+                                            {% if sorted_by == "deleted" and sorted_as == "desc" %}
+                                            <font color="red">arrow_downward</font>
+                                            {% else %}
+                                            arrow_downward
+                                            {% endif %}
+                                        </i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </th>
+                    <th class="roles">
+                        Roles
+                    </th>
+                    <th>Action</th>
+                </form>
+        </tr>
+        </thead>
+        <tbody class="card-panel">
+        {% for user in users %}
+        <tr>
+            <td style="padding-left: 20px;">{{ user.id }}</td>
+            <td>
+                {% if user.photo %}
+                <img src="{{ url_for('download', filename=config.UPLOAD_FOLDER ~ '/users/' ~ user.id ~ '/photo/' ~ user.photo) }}"
+                     width="40px" />
+                {% else %}
+                <span><i class="material-icons small">person</i></span>
+                {% endif %}
+            </td>
+            <td>{{ moment(user.date_created, local=True).format(config.DATE_TIME_FORMAT) }}</td>
+            <td>{{ moment(user.last_updated, local=True).format(config.DATE_TIME_FORMAT) }}</td>
+            <td>
+                <a href="{{ url_for('userbe.edit_user', id=user.id) }}">{{ user.name }}</a>
+            </td>
+            <td>{{ user.email|truncate(config.MAX_TRUNCATE)|safe }}</td>
+            <td>
+                {% if user.phone %}
+                {{ user.phone|truncate(config.MAX_TRUNCATE)|safe }}
+                {% endif %}
+            </td>
+            <td>
+                <div class="col s12 m6 l3">
+                    {% if user.confirmed %}
+                    <i class="material-icons small" style="color: green">sentiment_very_satisfied</i><br />
+                    {% else %}
+                    <i class="material-icons small" style="color: red">sentiment_very_dissatisfied</i><br />
+                    {% endif %}
+                </div>
+            </td>
+            <td>
+                {% if user.deleted %}
+                <div class="chip yellow">YES</div>
+                {% else %}
+                <div class="chip cyan">NO</div>
+                {% endif %}
+            </td>
+            <td>
+                <ul class="horizontal-list center-align">
+                    {% for role in user.roles %}
+                    <li>
+                        <div class="col s12 m6 l3">
+                            <i class="material-icons small" style="color: red">{{ role.icon }}</i><br />
+                            <span>{{ role.name }}</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                <ul class="horizontal-list">
+                    <li>
+                        <div id="modal{{user.id}}" class="modal">
+                            <div class="col s12 m6 l3">
+                                <div class="modal-content">
+                                    <h4>Toggle remove user</h4>
+                                    <p>
+                                    <h6>Are you sure you want to toggle remove<br />
+                                        user by name = <font color='red'>{{ user.name }}</font>?
+                                    </h6>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <ul class="horizontal-list right">
+                                        <li><button
+                                                class="modal-close waves-effect waves-green btn-small btn-yes green"
+                                                url="{{ url_for('userbe.delete_user', id=user.id) }}">Yes</button>
+                                        </li>
+                                        <li><button
+                                                class="modal-close waves-effect waves-green btn-small red">No</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-floating btn-large waves-effect waves-light red modal-trigger"
+                                data-target="modal{{user.id}}">
+                            {% if user.deleted %}
+                            <i class="material-icons">cached</i>
+                            {% else %}
+                            <i class="material-icons">cancel</i>
+                            {% endif %}
+                        </button>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<div class="row">
+    {{ m.user_pager(url_for("userbe.search_users"), is_advanced, keyword, sorted_by, sorted_as, per_page, page, total, last_page,
+    id_to_filter, name_to_filter, email_to_filter, phone_to_filter, confirmed_to_filter, deleted_to_filter, role_to_filter) }}
+</div>
+
+<script>
+    $(".btn-yes").click(function (evt) {
+
+        var url = evt.target.attributes[1].value;
+        if (!url) return;
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            success: function (result) {
+                M.toast({
+                    html: result
+                });
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            },
+            error: function (xhr, error) {
+                M.toast({
+                    html: xhr.responseJSON.message
+                });
+            }
+        });
+    });
+
+    var form = $("form.form-search-by-header");
+
+    var btn_id_asc = $(".my-table .btn-id-asc");
+    btn_id_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("id");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_id_desc = $(".my-table .btn-id-desc");
+    btn_id_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("id");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_photo_asc = $(".my-table .btn-photo-asc");
+    btn_photo_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("photo");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_photo_desc = $(".my-table .btn-photo-desc");
+    btn_photo_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("photo");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_create_date_asc = $(".my-table .btn-create-date-asc");
+    btn_create_date_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("date_created");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_create_date_desc = $(".my-table .btn-create-date-desc");
+    btn_create_date_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("date_created");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_last_update_asc = $(".my-table .btn-last-update-asc");
+    btn_last_update_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("last_updated");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_last_update_desc = $(".my-table .btn-last-update-desc");
+    btn_last_update_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("last_updated");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_name_asc = $(".my-table .btn-name-asc");
+    btn_name_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("name");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_name_desc = $(".my-table .btn-name-desc");
+    btn_name_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("name");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_email_asc = $(".my-table .btn-email-asc");
+    btn_email_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("email");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_email_desc = $(".my-table .btn-email-desc");
+    btn_email_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("email");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_phone_asc = $(".my-table .btn-phone-asc");
+    btn_phone_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("phone");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_phone_desc = $(".my-table .btn-phone-desc");
+    btn_phone_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("phone");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_confirmed_asc = $(".my-table .btn-confirmed-asc");
+    btn_confirmed_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("confirmed");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_confirmed_desc = $(".my-table .btn-confirmed-desc");
+    btn_confirmed_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("confirmed");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_deleted_asc = $(".my-table .btn-deleted-asc");
+    btn_deleted_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("deleted");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_deleted_desc = $(".my-table .btn-deleted-desc");
+    btn_deleted_desc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("deleted");
+        sorted_as.val("desc");
+        form.submit();
+    });
+
+    var btn_role_asc = $(".my-table .btn-role-asc");
+    btn_role_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("role");
+        sorted_as.val("asc");
+        form.submit();
+    });
+
+    var btn_role_desc = $(".my-table .btn-role-desc");
+    btn_role_asc.click(function (evt) {
+        var sorted_by = $("input.sorted_by");
+        var sorted_as = $("input.sorted_as");
+        sorted_by.val("role");
+        sorted_as.val("desc");
+        form.submit();
+    });
+</script>
+
+{% endblock %}

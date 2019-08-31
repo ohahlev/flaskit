@@ -1,0 +1,83 @@
+{% extends "backend/user/layout.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col s12">
+        <nav>
+            <div class="nav-wrapper green">
+                <span class="brand-logo center">Edit User</span>
+            </div>
+        </nav>
+        <div class="card-panel">
+            <div class="row center">
+                <div class="col s12">
+                    {% if user.photo %}
+                    <img src="{{ url_for('download', filename=config.UPLOAD_FOLDER ~ '/users/' ~ user.id ~ '/photo/' ~ user.photo) }}"
+                         height="200px"/><br/>
+                    {% else %}
+                    <span><i class="material-icons large">person</i></span><br/>
+                    {% endif %}
+                    <span>{{ user.name }}</span>
+                </div>
+            </div>
+            <form action="{{ url_for('userbe.edit_user', id=user.id) }}" method="post" class="form-edit-user" enctype=multipart/form-data>
+                {{ m.render_field(form.name) }}
+                {{ m.render_field(form.phone) }}
+                {{ m.render_field(form.email, true) }} <!-- true = disable -->
+                {{ m.render_multi_select("roles", "reorder", "Select role", roles, user.roles) }}
+                {{ m.render_file(form.photo) }}
+                {{ m.render_field(form.password) }}
+                {{ m.render_field(form.confirm) }}
+                {{ form.csrf_token }}
+                <button class="btn btn-submit-edit-user" type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modal-remove-place" class="modal">
+    <form method="post">
+        <div class="modal-content">
+            <h4 class="title"></h4>
+            <p>
+            <h6 class="content"></h6>
+            <br />
+            <input type="hidden" name="user_id" id="user_id" />
+            <input type="hidden" name="place_id" id="place_id" />
+            </p>
+        </div>
+        <div class="modal-footer">
+            <ul class="horizontal-list right">
+                <li><button class="modal-close waves-effect waves-green btn-small btn-place-yes green"
+                            type="submit">Yes</button></li>
+                <li><button class="modal-close waves-effect waves-green btn-small btn-place-no red">No</button></li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    $(".remove-place").on("click", function () {
+
+        var modal = $("#modal-remove-place");
+        var instance = M.Modal.getInstance(modal);
+        var place_id = $(this).attr("place_id");
+        var place_name = $(this).attr("place_name");
+        modal.find(".btn-place-no").attr("place_id", place_id);
+        modal.find(".btn-place-yes").attr("place_id", place_id);
+        modal.find("#place_id").val(place_id);
+        modal.find("#user_id").val("{{ user.id }}");
+
+        modal.find(".title").html("Remove place from user");
+        modal.find(".content").html("Are you sure to remove place = <font color='red'>" + place_name +
+              "</font> from user <font color='red'>{{user.name}}</font>");
+        modal.find("form").attr("action", "{{ url_for('userbe.delete_place', id=user.place[0].id) if user.place else '#' }}");
+        instance.open();
+
+    });
+
+</script>
+
+{% endblock %}

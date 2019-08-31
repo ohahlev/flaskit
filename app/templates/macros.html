@@ -1,0 +1,245 @@
+{% macro nav_link(endpoint, text) %}
+	{% if request.endpoint is not none %}
+		{% if request.endpoint.endswith(endpoint) %}
+		    <li class="active"><a href="{{ url_for(endpoint) }}">{{ text }}</a>
+		{% else %}
+		    <li><a href="{{ url_for(endpoint) }}">{{ text }}</a>
+		{% endif %}
+	{% else %}
+    	<li> <a href="{{ url_for(endpoint) }}">{{ text }}</a></li>
+	{% endif %}
+{% endmacro %}
+
+{% macro nav_link_with_icon(endpoint, icon, size, text) %}
+	{% if request.endpoint is not none %}
+		{% if request.endpoint.endswith(endpoint) %}
+		    <li class="active"><a href="{{ url_for(endpoint) }}"><i class="material-icons {{size}}">{{ icon }}</i>&nbsp;&nbsp;{{ text }}</a>
+		{% else %}
+		    <li><a href="{{ url_for(endpoint) }}"><i class="material-icons {{size}}">{{ icon }}</i>&nbsp;&nbsp;{{ text }}</a>
+		{% endif %}
+	{% else %}
+    	<li> <a href="{{ url_for(endpoint) }}"><i class="material-icons {{size}}">{{ icon }}</i>&nbsp;&nbsp;{{ text }}</a></li>
+	{% endif %}
+{% endmacro %}
+
+{% macro render_field(field, status) %}
+	<div class="row afield">
+		<div class="col s12 m10 l10">
+			<div class="input-field">
+          		<i class="material-icons prefix">{{ field.description }}</i>
+					{% if status == true %} 
+					  {{ field(id=field.name, disabled=True) }}
+					{% else %}
+					{{ field(id=field.name) }}
+					{% endif %}
+				  <label for="{{field.name}}">{{ field.name }}</label>
+				  {% if field.errors %}
+				  <div class="col s12 m10 l10">
+    			  	<ul>
+	    				{% for error in field.errors %}
+	      				<li><span class="helper-text" data-error="wrong">{{ error }}</span></li>
+	    				{% endfor %}
+    				</ul>
+    			  </div>
+				 {% endif %}
+			</div>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro render_number(field, status) %}
+	<div class="row afield">
+		<div class="col s12 m10 l10">
+			<div class="input-field">
+          		<i class="material-icons prefix">{{ field.description }}</i>
+					{% if status == true %}
+					  {{ field(id=field.name, disabled=True) }}
+					{% else %}
+					{{ field(id=field.name, type="number") }}
+					{% endif %}
+				  <label for="{{field.name}}">{{ field.name }}</label>
+				  {% if field.errors %}
+				  <div class="col s12 m10 l10">
+    			  	<ul>
+	    				{% for error in field.errors %}
+	      				<li><span class="helper-text" data-error="wrong">{{ error }}</span></li>
+	    				{% endfor %}
+    				</ul>
+    			  </div>
+				 {% endif %}
+			</div>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro render_text_area(field, status) %}
+	<div class="row afield">
+		<div class="col s12 m10 l10 input-field">
+          	<i class="material-icons prefix">{{ field.description }}</i>
+				{% if status == True %} 
+					{{ field(id=field.name, class="materialize-textarea", disabled=True) }}
+				{% else %}
+				{{ field(id=field.name, class="materialize-textarea") }}
+				{% endif %}
+          	<label for="{{field.name}}">{{ field.name }}</label>
+			{% if field.errors %}
+			<div class="col s12 m10 l10">
+    			<ul>
+	    		{% for error in field.errors %}
+	      			<li><span class="helper-text" data-error="wrong">{{ error }}</span></li>
+	    		{% endfor %}
+    			</ul>
+    		</div>
+			{% endif %}
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro render_multi_select(name, icon, label, options, selecteds) %}
+	<div class="row">
+		<div class="input-field col s12 m6 l3">
+			<div class="{{name}}">
+			<i class="material-icons prefix">{{ icon }}</i>
+			<select multiple name="{{name}}">
+				{% set ns = namespace(found=false) %}
+				 {% for option in options %}
+					{% set ns.found = false %}
+					{% for selected in selecteds %}
+						{% if option.name == selected.name %}
+							{% set ns.found = true %}
+						{% endif %}
+					{% endfor %}
+					{% if ns.found == true %}
+						<option value="{{ option.id }}" selected>{{ option.name }}</option>
+					{% else %}
+						<option value="{{ option.id }}">{{ option.name }}</option>
+					{% endif %}
+		 		{% endfor %}
+			</select>
+			<label>  
+				Select
+			</label>
+			</div>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro render_select(name, icon, label, options) %}
+	<div class="row">
+		<div class="input-field col s12 m6 l3">
+			<div class="{{name}}">
+			<i class="material-icons prefix">{{ icon }}</i>
+			<select name="{{name}}">
+				{% set ns = namespace(found=false) %}
+				 {% for option in options %}
+					{% set ns.found = false %}
+					{% for selected in selecteds %}
+						{% if option.name == selected.name %}
+							{% set ns.found = true %}
+						{% endif %}
+					{% endfor %}
+					{% if ns.found == true %}
+						<option value="{{ option.id }}" selected>{{ option.name }}</option>
+					{% else %}
+						<option value="{{ option.id }}">{{ option.name }}</option>
+					{% endif %}
+		 		{% endfor %}
+			</select>
+			<label>  
+				Select
+			</label>
+			</div>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro render_file(field) %}
+<div class="row afield">
+	<div class="col s12 m10 l10">
+		<div class="file-field input-field">
+			<div class="btn cyan">
+	  			<span>{{ field.name }}</span>
+	  			{{ field }}
+			</div>
+			<div class="file-path-wrapper">
+	  			<input class="file-path validate" type="text"/>
+			</div>
+		</div>
+	</div>
+</div>
+{% endmacro %}
+
+{% macro user_pager(url, is_advanced, keyword, sorted_by, sorted_as, per_page, page, total, last_page,
+	id_to_filter, name_to_filter, email_to_filter, phone_to_filter, confirmed_to_filter, deleted_to_filter,
+	role_to_filter) %}
+<ul class="pagination">
+	{% if page == 1 %}
+		<li class="disabled"><a href="JavaScript:void(0);"><i class="material-icons">chevron_left</i></a></li>
+	{% else %}
+		<li class="waves-effect"><a href="{{'{0}?is_advanced={1}&keyword={2}&sorted_by={3}&sorted_as={4}&per_page={5}'
+		'&page={6}&filtered_by_id={7}&filtered_by_name={8}&filtered_by_email={9}&filtered_by_phone={10}'
+		'&filtered_by_confirmed={11}&filtered_by_deleted={12}&filtered_by_role={13}'.
+		format(url,is_advanced,keyword,sorted_by,sorted_as,per_page,page-1,id_to_filter,name_to_filter,email_to_filter,
+		phone_to_filter,confirmed_to_filter,deleted_to_filter,role_to_filter)|urlencode}}">
+			<i class="material-icons">chevron_left</i></a>
+		</li>
+	{% endif %}
+
+	{% if page == 1 %}
+		<li class="active"><a href="JavaScript:void(0);">first</a></li>
+	{% else %}
+		<li class="waves-effect"><a href="{{'{0}?is_advanced={1}&keyword={2}&sorted_by={3}&sorted_as={4}&per_page={5}&'
+		'page={6}&filtered_by_id={7}&filtered_by_name={8}&filtered_by_email={9}&filtered_by_phone={10}&'
+		'filtered_by_confirmed={11}&filtered_by_deleted={12}&filtered_by_role={13}'
+		.format(url,is_advanced,keyword,sorted_by,sorted_as,per_page,1,id_to_filter,name_to_filter,email_to_filter,
+		phone_to_filter,confirmed_to_filter,deleted_to_filter,role_to_filter)|urlencode}}">first</a>
+		</li>
+	{% endif %}
+
+	<li class="active"><a href="JavaScript:void(0);">{{ page }}</a></li>
+
+	{% if total - ((page) * per_page) > 0 %}
+		<li class="waves-effect"><a href="{{'{0}?is_advanced={1}&keyword={2}&sorted_by={3}&sorted_as={4}&per_page={5}'
+		'&page={6}&filtered_by_id={7}&filtered_by_name={8}&filtered_by_email={9}&filtered_by_phone={10}'
+		'&filtered_by_confirmed={11}&filtered_by_deleted={12}&filtered_by_role={13}'
+		.format(url,is_advanced,keyword,sorted_by,sorted_as,per_page,page+1,id_to_filter,name_to_filter,
+		email_to_filter,phone_to_filter,confirmed_to_filter,deleted_to_filter,role_to_filter)|urlencode}}">
+			{{ page + 1 }}</a>
+		</li>
+	{% endif %}
+
+	{% if total - ((page + 1) * per_page) > 0 %}
+		<li class="waves-effect"><a href="{{'{0}?is_advanced={1}&keyword={2}&sorted_by={3}&sorted_as={4}&per_page={5}'
+		'&page={6}&filtered_by_id={7}&filtered_by_name={8}&filtered_by_email={9}&filtered_by_phone={10}'
+		'&filtered_by_confirmed={11}&filtered_by_deleted={12}&filtered_by_role={13}'
+		.format(url,is_advanced,keyword,sorted_by,sorted_as,per_page,page+2,id_to_filter,name_to_filter,
+		email_to_filter,phone_to_filter,confirmed_to_filter,deleted_to_filter,role_to_filter)|urlencode}}">
+			{{ page + 2 }}</a>
+		</li>
+	{% endif %}
+
+	{% if page == last_page %}
+		<li class="active"><a href="JavaScript:void(0);">last</a></li>
+	{% else %}
+		<li class="waves-effect"><a href="{{'{0}?is_advanced={1}&keyword={2}&sorted_by={3}&sorted_as={4}&per_page={5}'
+		'&page={6}&filtered_by_id={7}&filtered_by_name={8}&filtered_by_email={9}&filtered_by_phone={10}'
+		'&filtered_by_confirmed={11}&filtered_by_deleted={12}&filtered_by_role={13}'
+		.format(url,is_advanced,keyword,sorted_by,sorted_as,per_page,last_page,id_to_filter,name_to_filter,
+		email_to_filter,phone_to_filter,confirmed_to_filter,deleted_to_filter,role_to_filter)|urlencode}}">
+			last</a>
+		</li>
+	{% endif %}
+
+	{% if total - (page * per_page) > 0 %}
+		<li class="waves-effect"><a href="{{'{0}?is_advanced={1}&keyword={2}&sorted_by={3}&sorted_as={4}&per_page={5}'
+		'&page={6}&filtered_by_id={7}&filtered_by_name={8}&filtered_by_email={9}&filtered_by_phone={10}'
+		'&filtered_by_confirmed={11}&filtered_by_deleted={12}&filtered_by_role={13}'
+		.format(url,is_advanced,keyword,sorted_by,sorted_as,per_page,page+1,id_to_filter,name_to_filter,
+		email_to_filter,phone_to_filter,confirmed_to_filter,deleted_to_filter,role_to_filter)|urlencode}}">
+			<i class="material-icons">chevron_right</i></a>
+		</li>
+	{% else %}
+		<li class="disabled"><a href="JavaScript:void(0);"><i class="material-icons">chevron_right</i></a></li>
+	{% endif %}
+</ul>
+{% endmacro %}

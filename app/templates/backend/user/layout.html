@@ -1,0 +1,9 @@
+{% extends "backend/layout.html" %}
+
+{% block admin_nav %}
+  <li class="active"><a href="{{ url_for('userbe.index') }}">User Management</a></li>
+{% endblock %}
+
+{% block admin_nav_mobile %}
+  <li class="active"><a href="{{ url_for('userbe.index') }}">User Management</a></li>
+{% endblock %}

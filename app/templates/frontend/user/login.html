@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col s12 m10 l10">
+		<nav>
+			<div class="nav-wrapper green">
+				<span class="brand-logo center">Login</span>
+			</div>
+		</nav>
+		<div class="card-panel">
+			<form action="/user/login" method="post">
+				<input type="hidden" name="next" value="{{ next }}" />
+				{{ m.render_field(form.email) }}
+				{{ m.render_field(form.password) }}
+				{{ form.csrf_token }}
+				<div class="row">
+					<div class="col s12 m10 l10">
+						<button class="btn left" type="submit">Login</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s12 m10 l10">
+						<a href="/user/forgot" class="btn red left">forgot password</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+</a>
+
+{% endblock %}

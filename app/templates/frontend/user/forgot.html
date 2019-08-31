@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+	<div class="col s12 m10 l10">
+		<nav>
+			<div class="nav-wrapper green">
+				<span class="brand-logo center">Forgot password</span>
+			</div>
+		</nav>
+		<div class="card-panel">
+			<form action="/user/forgot" method="post">
+				<p>Enter your email address so that we can send you a password reset link</p>
+				{{ m.render_field(form.email) }}
+				{{ form.csrf_token }}
+				<button class="btn red" type="submit">Confirm</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
