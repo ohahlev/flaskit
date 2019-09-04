@@ -47,4 +47,4 @@ DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss"
 
 BABEL_TRANSLATION_DIRECTORIES = "./translations"
 
-LANG = "en_US"
+LANG = "km_KH"

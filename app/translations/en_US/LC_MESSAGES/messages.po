@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-09-04 21:10+0700\n"
-"PO-Revision-Date: 2019-09-04 21:10+0700\n"
+"POT-Creation-Date: 2019-09-04 21:46+0700\n"
+"PO-Revision-Date: 2019-09-04 21:44+0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
 "Language-Team: en_US <LL@li.org>\n"
@@ -21,4 +21,8 @@ msgstr ""
 #: app/templates/layout.html:127
 msgid "Our Pages"
 msgstr "Our Pages1"
+
+#: app/templates/frontend/site/index.html:7
+msgid "Search"
+msgstr "Search1"
 
