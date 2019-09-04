@@ -7,7 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager
 from flask_json import FlaskJSON
 from app import util
-
+from flask_babel import Babel
 
 class ReverseProxied(object):
     def __init__(self, app):
@@ -62,3 +62,14 @@ app.add_url_rule("/uploads/<path:filename>", endpoint="uploads", view_func=app.s
 def load_user(id):
     return User.query.filter(User.id == id).first()
 
+app.config.from_pyfile('mysettings.cfg')
+babel = Babel(app)
+
+@babel.localeselector
+def get_locale():
+    try:
+        lang = session["lang"]
+    except KeyError:
+        lang = request.app.config["LANG"]
+        session.setdefault("lang", lang)
+    return lang

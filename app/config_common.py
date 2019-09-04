@@ -44,3 +44,7 @@ MAX_TRUNCATE = 10
 
 # default date time format
 DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss"
+
+BABEL_TRANSLATION_DIRECTORIES = "./app/translations"
+
+LANG = "km_KH"

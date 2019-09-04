@@ -32,6 +32,25 @@
 
             {% block nav_menu %} {% endblock %}
 
+             <li>
+                    <form id="form_select_lang" action="/lang/" method="POST">
+                    <ul id="language-dropdown" class="dropdown-content">
+                        <li class="lang"><a href="#" lang="km_KH">KH</a></li>
+                        <li class="lang"><a href="#" lang="en_US">EN</a></li>
+                    </ul>
+                        <input type="hidden" id="selected_lang" name="selected_lang"/>
+                        <input type="hidden" id="current_page" name="current_page"/>
+                    </form>
+                    <a class="dropdown-trigger" href="#!" data-target="language-dropdown">
+                        {% if session["lang"] == "km_KH" %}
+                        KH
+                        {% else %}
+                        EN
+                        {% endif %}
+                        <i class="material-icons right">arrow_drop_down</i>
+                    </a>
+                </li>
+
             {% if current_user.is_authenticated %}
             <li>
                 <ul id="dropdown-user" class="dropdown-content">
