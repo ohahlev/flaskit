@@ -18,7 +18,7 @@
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ config.APP_NAME }} {{ title }}</title>
+    <title>{{ config.APP_NAME }}</title>
 </head>
 <body>
 
@@ -31,25 +31,6 @@
         <ul class="right hide-on-med-and-down">
 
             {% block nav_menu %} {% endblock %}
-
-             <li>
-                    <form id="form_select_lang" action="/lang/" method="POST">
-                    <ul id="language-dropdown" class="dropdown-content">
-                        <li class="lang"><a href="#" lang="km_KH">KH</a></li>
-                        <li class="lang"><a href="#" lang="en_US">EN</a></li>
-                    </ul>
-                        <input type="hidden" id="selected_lang" name="selected_lang"/>
-                        <input type="hidden" id="current_page" name="current_page"/>
-                    </form>
-                    <a class="dropdown-trigger" href="#!" data-target="language-dropdown">
-                        {% if session["lang"] == "km_KH" %}
-                        KH
-                        {% else %}
-                        EN
-                        {% endif %}
-                        <i class="material-icons right">arrow_drop_down</i>
-                    </a>
-                </li>
 
             {% if current_user.is_authenticated %}
             <li>
@@ -66,6 +47,25 @@
             {{ m.nav_link('userfe.register', 'Register') }}
             {{ m.nav_link('userfe.login', 'Login') }}
             {% endif %}
+
+            <li>
+                <form id="form_select_lang" action="/lang" method="POST">
+                    <ul id="language-dropdown" class="dropdown-content">
+                        <li class="lang"><a href="#" lang="km_KH">KH</a></li>
+                        <li class="lang"><a href="#" lang="en_US">EN</a></li>
+                    </ul>
+                    <input type="hidden" id="selected_lang" name="selected_lang"/>
+                    <input type="hidden" id="current_page" name="current_page"/>
+                </form>
+                <a class="dropdown-trigger" href="#!" data-target="language-dropdown">
+                    {% if session["lang"] == "km_KH" %}
+                    KH
+                    {% else %}
+                    EN
+                    {% endif %}
+                    <i class="material-icons right">arrow_drop_down</i>
+                </a>
+            </li>
 
         </ul>
         <ul id="nav-mobile" class="sidenav">
@@ -88,7 +88,6 @@
             <li><a href="{{ url_for('userfe.register') }}">Register</a>
             <li><a href="{{ url_for('userfe.login') }}">Log in</a>
                 {% endif %}
-
         </ul>
         <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>
@@ -125,7 +124,7 @@
 
             </div>
             <div class="col l3 s12">
-                <h5 class="white-text">Our Pages</h5>
+                <h5 class="white-text">{{_("Our Pages")}}</h5>
                 <ul>
                     <li><a class="white-text" href="#!">Contact</a></li>
                     <li><a class="white-text" href="#!">About</a></li>
@@ -162,6 +161,13 @@
             $("select").formSelect();
             $(".sidenav").sidenav();
             $(".collapsible").collapsible();
+
+            $(".lang").on("click", function(e) {
+                e.preventDefault();
+                $("#selected_lang").val(e.target.lang);
+                $("#current_page").val($(location).attr("href"));
+                $("#form_select_lang").submit();
+            });
         });
 
     </script>

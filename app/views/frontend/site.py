@@ -1,6 +1,6 @@
 from flask import (
     Blueprint, render_template, session, request,
-    redirect
+    redirect, url_for
 )
 
 bp = Blueprint("sitefe", __name__)
@@ -22,6 +22,6 @@ def switch_lang():
         session["lang"] = lang
     current_page = request.form.get("current_page")
     if not current_page:
-        return redirect("sitefe.index")
-
+        return redirect(url_for("sitefe.index"))
     return redirect(current_page)
+
