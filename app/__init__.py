@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from flask_json import FlaskJSON
 from app import util
 from flask_babel import Babel
+from flask_apscheduler import APScheduler
 
 class ReverseProxied(object):
     def __init__(self, app):
@@ -34,6 +35,10 @@ moment = Moment(app)
 moment.init_app(app)
 
 FlaskJSON(app)
+
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
 
 from app.logger_setup import logger
 from app.models import User

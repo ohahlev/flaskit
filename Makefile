@@ -19,5 +19,14 @@ prod_mysql:
 prod_pg:
 	cd app && ln -sf config_prod_pg.py config.py
 
+drop_db:
+	python manage.py drop_db
+
+init_db:
+	python manage.py init_db
+
+init_data:
+	python manage.py init_data
+
 clean:
 	pyclean .

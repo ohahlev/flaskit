@@ -28,6 +28,8 @@ class User(db.Model, UserMixin):
     confirmed = Column(Boolean, default=False)
     deleted = Column(Boolean, default=False)
 
+    token = Column(String(1024))
+
     date_created = Column(DateTime(timezone=False), server_default=func.now())
     last_updated = Column(DateTime(timezone=False), server_default=func.now(), onupdate=func.now())
 

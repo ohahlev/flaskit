@@ -9,6 +9,8 @@ from wtforms.validators import (
     ValidationError
 )
 from sqlalchemy import and_
+from datetime import datetime
+import random, string
 import app
 
 
@@ -28,6 +30,11 @@ DEFAULT_SORT = "last_updated"
 # empty value
 EMPTY = "3MPT2"
 
+# default salt
+DEFAULT_SALT = "DEFAULT-SALT"
+
+# minute expire
+TOKEN_TIMEOUT = 5
 
 def role_required(argument):
     def real_decorator(function):
@@ -51,14 +58,11 @@ def role_required(argument):
     return real_decorator
 
 
-
 class Unique(object):
-
     def __init__(self, model, field, message):
         self.model = model
         self.field = field
         self.message = message
-
     def __call__(self, form, field):
         check = self.model.query.filter(self.field == field.data).first()
         if check:
@@ -66,13 +70,11 @@ class Unique(object):
 
 
 class UniqueEdit(object):
-
     def __init__(self, model, id, field, message):
         self.model = model
         self.field = field
         self.id = id
         self.message = message
-
     def __call__(self, form, field):
         check = self.model.query.filter(and_(self.field == field.data, self.id != form.id.data)).first()
         if check:
@@ -85,14 +87,19 @@ def allowed_file(filename, allowed_extensions):
 
 
 def convert_to_dict(obj):
-
     #  Populate the dictionary with object meta data
     obj_dict = {
         "__class__": obj.__class__.__name__,
         "__module__": obj.__module__
     }
-
     #  Populate the dictionary with object properties
     obj_dict.update(obj.__dict__)
-
     return obj_dict
+
+def get_salt(starting_key):
+    key = starting_key if starting_key is not None else DEFAULT_SALT
+    return "{0} - {1}".format(key, datetime.now())
+
+def generate_random(n):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=n))
+

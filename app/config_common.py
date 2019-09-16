@@ -13,7 +13,12 @@ COPY_RIGHT = "implemented by ohahlev@gmail.com"
 TIMEZONE = "Asia/Bangkok"
 
 # Secret key for generating tokens
-SECRET_KEY = "houdini"
+SECRET_KEY = "FLASKIT"
+
+# salt
+SALT_RESET_PASSWORD = "TO-RESET-PASSWORD"
+
+SALT_CONFIRM_EMAIL = "TO-CONFIRM-EMAIL"
 
 # Configuration of a Gmail account for sending mails
 MAIL_SERVER = "smtp.gmail.com"
