@@ -1,4 +1,5 @@
-# flaskit
+# FLASKIT
+### project code set up
 
 - create virtual env
 
@@ -8,27 +9,30 @@
 
 	`source env/bin/activate`
 	
-- install dependencies and use config for postgresql in dev mode
+- install dependency and use dev config for postgresql
 
 	`make install && make dev_pg`
-	
-- set up database environment variables
+		
+### environment variable set up
 
-	`source script/dev.sh`
-	
+- replace script/dev.sh and script/prod.sh with real value
+
+### database set up
+
+- create database name flaskit
+
 - drop all tables
 
-	`python manage.py drop_db`
-
+	`make drop_db`
+		
 - create all tables
 
-	`python manage.py init_db`
+	`make init_db`
 	
-- insert scaffolding data
+- insert initalized data
 
-	`python manage.py init_data`
+	`make init_data`
+
+
+
 	
-- run the application.
-
-	`flask run --host 0.0.0.0 --port 2401`
-
