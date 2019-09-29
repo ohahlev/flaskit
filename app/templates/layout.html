@@ -20,123 +20,142 @@
 </head>
 <body>
 
-    {% block nav %}
-    <nav class="blue" role="navigation">
-        <div class="nav-wrapper container">
-            <a id="logo-container" href="/" class="brand-logo">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" height="65px"/>
-            </a>
-            <ul class="right hide-on-med-and-down">
+{% block nav %}
+<nav class="blue" role="navigation">
+    <div class="nav-wrapper container">
+        <a id="logo-container" href="/" class="brand-logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" height="65px"/>
+        </a>
+        <ul class="right hide-on-med-and-down">
 
-                {% block nav_menu %} {% endblock %}
+            {% block nav_menu %} {% endblock %}
 
-                {% if current_user.is_authenticated %}
-                <li>
-                	<ul id="dropdown-user" class="dropdown-content">
+            {% if current_user.is_authenticated %}
+            <li>
+                <ul id="dropdown-user" class="dropdown-content">
 
-                        {% if current_user.is_admin() %}
-                        <li><a href="{{ url_for('userbe.index') }}">Admin Panel</a></li>
-                        {% endif %}
-                		<li><a href="{{ url_for('userfe.logout') }}">Log out</a></li>
-                	</ul>
-                		<a class="dropdown-trigger" href="#!" data-target="dropdown-user">
-                        	{{ current_user.name }}<i class="material-icons right">arrow_drop_down</i></a>
-                </li>
-            	{% else %}
-                    {{ m.nav_link('userfe.register', 'Register') }}
-				    {{ m.nav_link('userfe.login', 'Login') }}
-                {% endif %}
+                    {% if current_user.is_admin() %}
+                    <li><a href="{{ url_for('userbe.index') }}">Admin Panel</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('userfe.logout') }}">Log out</a></li>
+                </ul>
+                <a class="dropdown-trigger" href="#!" data-target="dropdown-user">
+                    {{ current_user.name }}<i class="material-icons right">arrow_drop_down</i></a>
+            </li>
+            {% else %}
+            {{ m.nav_link('userfe.register', 'Register') }}
+            {{ m.nav_link('userfe.login', 'Login') }}
+            {% endif %}
 
-            </ul>
-            <ul id="nav-mobile" class="sidenav">
-
-                {% block nav_menu_mobile %} {% endblock %}
-
-                {% if current_user.is_authenticated %}
-                <li>
-                    <ul id="dropdown-user-mobile" class="dropdown-content">
-
-                        {% if current_user.is_admin() %}
-                        <li><a href="{{ url_for('userbe.index') }}">Admin Panel</a></li>
-                        {% endif %}
-                        <li><a href="{{ url_for('userfe.logout') }}">Log out</a></li>
+            <li>
+                <form id="form_select_lang" action="/lang" method="POST">
+                    <ul id="language-dropdown" class="dropdown-content">
+                        <li class="lang"><a href="#" lang="km_KH">KH</a></li>
+                        <li class="lang"><a href="#" lang="en_US">EN</a></li>
                     </ul>
-                    <a class="dropdown-trigger" href="#!" data-target="dropdown-user-mobile">
-                        {{ current_user.name }}<i class="material-icons right">arrow_drop_down</i>
-					</a>
-                </li>
-                {% else %}
-                <li><a href="{{ url_for('userfe.register') }}">Register</a>
-                <li><a href="{{ url_for('userfe.login') }}">Log in</a>
+                    <input type="hidden" id="selected_lang" name="selected_lang"/>
+                    <input type="hidden" id="current_page" name="current_page"/>
+                </form>
+                <a class="dropdown-trigger" href="#!" data-target="language-dropdown">
+                    {% if session["lang"] == "km_KH" %}
+                    KH
+                    {% else %}
+                    EN
+                    {% endif %}
+                    <i class="material-icons right">arrow_drop_down</i>
+                </a>
+            </li>
+
+        </ul>
+        <ul id="nav-mobile" class="sidenav">
+
+            {% block nav_menu_mobile %} {% endblock %}
+
+            {% if current_user.is_authenticated %}
+            <li>
+                <ul id="dropdown-user-mobile" class="dropdown-content">
+
+                    {% if current_user.is_admin() %}
+                    <li><a href="{{ url_for('userbe.index') }}">Admin Panel</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('userfe.logout') }}">Log out</a></li>
+                </ul>
+                <a class="dropdown-trigger" href="#!" data-target="dropdown-user-mobile">
+                    {{ current_user.name }}<i class="material-icons right">arrow_drop_down</i>
+                </a>
+            </li>
+            {% else %}
+            <li><a href="{{ url_for('userfe.register') }}">Register</a>
+            <li><a href="{{ url_for('userfe.login') }}">Log in</a>
                 {% endif %}
 
-            </ul>
-            <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-        </div>
-    </nav>
-    {% endblock %}
+        </ul>
+        <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+</nav>
+{% endblock %}
 
-    {% block sidenav %}{% endblock %}
+{% block sidenav %}{% endblock %}
 
-    {% block jumbotron %}{% endblock %}
+{% block jumbotron %}{% endblock %}
 
-    <div class="container">
-        <div class="section">
+<div class="container">
+    <div class="section">
 
-            {% for message in get_flashed_messages() %}
-          		<script>
+        {% for message in get_flashed_messages() %}
+        <script>
               		M.toast({ html: '{{ message }}' });
           		</script>
-        	{% endfor %}
+        {% endfor %}
 
-            {% block content %}
+        {% block content %}
 
-            {% endblock %}
+        {% endblock %}
 
-        </div>
-        <br/><br/>
     </div>
+    <br/><br/>
+</div>
 
-    {% block footer %}
-    <footer class="page-footer orange">
+{% block footer %}
+<footer class="page-footer orange">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+                <h5 class="white-text">{{ config.APP_NAME }}</h5>
+                <p class="grey-text text-lighten-4">{{ config.APP_NAME_SECOND_LINE }}</p>
+
+            </div>
+            <div class="col l3 s12">
+                <h5 class="white-text">Our Pages</h5>
+                <ul>
+                    <li><a class="white-text" href="{{ url_for('sitefe.contact')}}">Contact</a></li>
+                    <li><a class="white-text" href="{{ url_for('sitefe.about')}}">About</a></li>
+                </ul>
+            </div>
+            <div class="col l3 s12">
+                <h5 class="white-text">Connect</h5>
+                <ul>
+                    <li><a class="white-text" href="#!">Facebook</a></li>
+                    <li><a class="white-text" href="#!">Linkin</a></li>
+                    <li><a class="white-text" href="#!">Google</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
         <div class="container">
             <div class="row">
                 <div class="col l6 s12">
-                    <h5 class="white-text">{{ config.APP_NAME }}</h5>
-                    <p class="grey-text text-lighten-4">{{ config.APP_NAME_SECOND_LINE }}</p>
-
-                </div>
-                <div class="col l3 s12">
-                    <h5 class="white-text">Our Pages</h5>
-                    <ul>
-                        <li><a class="white-text" href="{{ url_for('sitefe.contact')}}">Contact</a></li>
-                        <li><a class="white-text" href="{{ url_for('sitefe.about')}}">About</a></li>
-                    </ul>
-                </div>
-                <div class="col l3 s12">
-                    <h5 class="white-text">Connect</h5>
-                    <ul>
-                        <li><a class="white-text" href="#!">Facebook</a></li>
-                        <li><a class="white-text" href="#!">Linkin</a></li>
-                        <li><a class="white-text" href="#!">Google</a></li>
-                    </ul>
+                    {{ config.COPY_RIGHT }}<br/>
                 </div>
             </div>
         </div>
-        <div class="footer-copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col l6 s12">
-                        {{ config.COPY_RIGHT }}<br/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    </div>
+</footer>
 
-    {% endblock %}
+{% endblock %}
 
-   <script>
+<script>
         $(document).ready(function(){
             $(".dropdown-trigger").dropdown();
             $(".tabs").tabs();
@@ -150,6 +169,13 @@
             setInterval(function() {
                 $(".carousel").carousel("next");
             }, 2000); // every 2 seconds
+
+             $(".lang").on("click", function(e) {
+                e.preventDefault();
+                $("#selected_lang").val(e.target.lang);
+                $("#current_page").val($(location).attr("href"));
+                $("#form_select_lang").submit();
+            });
         });
     </script>
 
