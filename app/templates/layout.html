@@ -33,7 +33,7 @@
                 {% if current_user.is_authenticated %}
                 <li>
                 	<ul id="dropdown-user" class="dropdown-content">
-                        <li><a href="{{ url_for('userfe.profile', id=1) }}">Profile</a></li>
+
                         {% if current_user.is_admin() %}
                         <li><a href="{{ url_for('userbe.index') }}">Admin Panel</a></li>
                         {% endif %}
@@ -55,7 +55,7 @@
                 {% if current_user.is_authenticated %}
                 <li>
                     <ul id="dropdown-user-mobile" class="dropdown-content">
-                        <li><a href="{{ url_for('userfe.profile', id=1) }}">Profile</a></li>
+
                         {% if current_user.is_admin() %}
                         <li><a href="{{ url_for('userbe.index') }}">Admin Panel</a></li>
                         {% endif %}
