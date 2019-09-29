@@ -2,15 +2,14 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col s12">
-        <nav>
-            <div class="nav-wrapper green">
-                <span class="brand-logo center">Create User</span>
-            </div>
-        </nav>
-        <div class="card-panel">
-          <form action="{{ url_for('userbe.create_user') }}" method="post" class="form-create-user" enctype=multipart/form-data>
+<div class="col s12">
+    <nav>
+        <div class="nav-wrapper green">
+            <span class="brand-logo center">Create User</span>
+        </div>
+    </nav>
+    <div class="card-panel">
+        <form action="{{ url_for('userbe.create_user') }}" method="post" class="form-create-user" enctype=multipart/form-data>
             {{ m.render_field(form.name) }}
             {{ m.render_field(form.phone) }}
             {{ m.render_field(form.email) }} <!-- true = disable -->
@@ -20,11 +19,10 @@
             {{ m.render_field(form.confirm) }}
             {{ form.csrf_token }}
             <button class="btn btn-submit-create-user" type="submit">Create</button>
-          </form>
-        </div>
+        </form>
     </div>
 </div>
-    
+
 <script>
 
 </script>

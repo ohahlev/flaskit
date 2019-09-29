@@ -2,37 +2,35 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col s12">
-        <nav>
-            <div class="nav-wrapper green">
-                <span class="brand-logo center">Edit User</span>
-            </div>
-        </nav>
-        <div class="card-panel">
-            <div class="row center">
-                <div class="col s12">
-                    {% if user.photo %}
-                    <img src="{{ url_for('download', filename=config.UPLOAD_FOLDER ~ '/users/' ~ user.id ~ '/photo/' ~ user.photo) }}"
-                         height="200px"/><br/>
-                    {% else %}
-                    <span><i class="material-icons large">person</i></span><br/>
-                    {% endif %}
-                    <span>{{ user.name }}</span>
-                </div>
-            </div>
-            <form action="{{ url_for('userbe.edit_user', id=user.id) }}" method="post" class="form-edit-user" enctype=multipart/form-data>
-                {{ m.render_field(form.name) }}
-                {{ m.render_field(form.phone) }}
-                {{ m.render_field(form.email, true) }} <!-- true = disable -->
-                {{ m.render_multi_select("roles", "reorder", "Select role", roles, user.roles) }}
-                {{ m.render_file(form.photo) }}
-                {{ m.render_field(form.password) }}
-                {{ m.render_field(form.confirm) }}
-                {{ form.csrf_token }}
-                <button class="btn btn-submit-edit-user" type="submit">Save</button>
-            </form>
+<div class="col s12">
+    <nav>
+        <div class="nav-wrapper green">
+            <span class="brand-logo center">Edit User</span>
         </div>
+    </nav>
+    <div class="card-panel">
+        <div class="row center">
+            <div class="col s12">
+                {% if user.photo %}
+                <img src="{{ url_for('download', filename=config.UPLOAD_FOLDER ~ '/users/' ~ user.id ~ '/photo/' ~ user.photo) }}"
+                     height="200px"/><br/>
+                {% else %}
+                <span><i class="material-icons large">person</i></span><br/>
+                {% endif %}
+                <span>{{ user.name }}</span>
+            </div>
+        </div>
+        <form action="{{ url_for('userbe.edit_user', id=user.id) }}" method="post" class="form-edit-user" enctype=multipart/form-data>
+            {{ m.render_field(form.name) }}
+            {{ m.render_field(form.phone) }}
+            {{ m.render_field(form.email, true) }} <!-- true = disable -->
+            {{ m.render_multi_select("roles", "reorder", "Select role", roles, user.roles) }}
+            {{ m.render_file(form.photo) }}
+            {{ m.render_field(form.password) }}
+            {{ m.render_field(form.confirm) }}
+            {{ form.csrf_token }}
+            <button class="btn btn-submit-edit-user" type="submit">Save</button>
+        </form>
     </div>
 </div>
 
