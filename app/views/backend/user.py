@@ -7,7 +7,8 @@ from flask import (
 
 from sqlalchemy.orm import lazyload
 from app import app, db, logger, util
-from app.models import User, Role
+from app.models.user import User
+from app.models.role import Role
 from app.forms.user import (
     FormCreateUser, FormEditProfileForAdmin
 )
@@ -336,56 +337,3 @@ def search_users_results(is_advanced, keyword, sorted_by, sorted_as, per_page, p
                            email_to_filter=email_to_filter, phone_to_filter=phone_to_filter,
                            confirmed_to_filter=confirmed_to_filter, deleted_to_filter=deleted_to_filter,
                            role_to_filter=role_to_filter, is_advanced=is_advanced)
-
-
-@bp.route("/add/user/place", methods=["POST"])
-@role_required([ADMIN])
-def add_place():
-    user_id = request.form.get("user_id")
-    place_id = request.form.get("place_id")
-
-    user = User.find_by_id(user_id)
-    if not user:
-        abort(404)
-
-    place = Place.find_by_id(place_id)
-    if not place:
-        abort(404)
-
-    place.user = user
-
-    try:
-        db.session.commit()
-        flash("{0} is added to user {1}".format(place.name, user.name), "positive")
-    except Exception as err:
-        logger.exception(err)
-        flash("can not add {0} to user {1} at this moment".format(place.name, user.name),
-              "negative")
-
-    return redirect(url_for("userbe.edit_user", id=user.id))
-
-
-@bp.route("/delete/user/place/<int:id>", methods=["GET", "POST"])
-@role_required([ADMIN])
-def delete_place(id):
-
-    place = Place.find_by_id(id)
-
-    if not place:
-        abort(404)
-
-    user_id = place.user.id
-    place.user = None
-
-    try:
-        db.session.commit()
-        flash("{0} is unlinked".format(place.name), "positive")
-    except Exception as err:
-        logger.exception(err)
-        flash("can not unlink place {0}".format(place.name), "negative")
-
-    return redirect(url_for("userbe.edit_user", id=user_id))
-
-
-
-

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "USER",
+    "icon": "person"
+  },
+  {
+    "name": "ADMIN",
+    "icon": "security"
+  },
+  {
+    "name": "API",
+    "icon": "dashboard"
+  }
+]

@@ -8,10 +8,14 @@ from flask_login import (
 )
 from itsdangerous import URLSafeTimedSerializer
 from app import app, db, util, logger
-from app.models import User, Role
-from app.forms import user as user_forms
-from app.toolbox import email
+from app.models.user import User
+from app.models.role import Role
+from app.forms.user import (
+   FormRegister, FormReset, FormLogin, FormEditProfile,
+   FormChangePassword, FormForgot
+)
 from datetime import datetime, timedelta
+from app.toolbox import email
 
 # Serializer for generating random tokens
 ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
@@ -37,7 +41,7 @@ def register():
     if request.method == "GET" and current_user.is_authenticated:
         return redirect(url_for("sitefe.index"))
 
-    form = user_forms.FormRegister()
+    form = FormRegister()
 
     if form.validate_on_submit():
 
@@ -86,16 +90,10 @@ def register():
             logger.exception(err)
             flash("can not register at this moment", "negative")
             return redirect(url_for("userfe.register"))
-
     return render_template("frontend/user/register.html", form=form, title="Register")
-
 
 @bp.route("/confirm/<token>", methods=["GET"])
 def confirm(token):
-
-    # can not confirm if already logged in
-    if request.method == "GET" and current_user.is_authenticated:
-        return redirect(url_for("sitefe.index"))
 
     try:
         user = User.query.filter_by(token=token).first()
@@ -119,24 +117,27 @@ def confirm(token):
     flash("Your email address has been confirmed, you can log in.", "positive")
     return redirect(url_for("userfe.login"))
 
+@bp.route("/login", defaults={"next1": None}, methods=["GET", "POST"])
+@bp.route("/login?next=<next1>", methods=["GET", "POST"])
+def login(next1):
 
-@bp.route("/login", methods=["GET", "POST"])
-def login():
+    invalid_user = "invalid user"
 
-    # redirect to home if already logged
-    if request.method == "GET" and current_user.is_authenticated:
-        return redirect(url_for("sitefe.index"))
-
-    form = user_forms.FormLogin()
+    form = FormLogin()
 
     next_page = ""
+    if request.method == "GET":
+        next_page = request.args.get("next")
+        form.next.data = next_page
+    elif request.method == "POST":
+        next_page = form.next.data
 
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
 
         # check if user exists
         if user is None:
-            flash("Unknown email address.", "negative")
+            flash(invalid_user, "negative")
             return redirect(url_for("userfe.login"))
 
         # check if already confirm
@@ -151,25 +152,31 @@ def login():
 
         # check the password is correct
         if user.check_password(form.password.data) is False:
-            flash("The password you have entered is wrong.", "negative")
+            flash(invalid_user, "negative")
             return redirect(url_for("userfe.login"))
 
         # everything is good to go
 
+        #agent = request.headers.get("User-Agent")
+        #print("user agent = {0}".format(agent))
+        #print("mobile user? == {0}".format(util.is_mobile_user(agent)))
+
         login_user(user)
         flash("Succesfully logged in.", "positive")
 
-        # send back to previous attempt
-        next_page = form.next.data
         if next_page:
             resp = make_response(redirect(next_page))
         else:
             resp = make_response(redirect(url_for("sitefe.index")))
 
-        resp.set_cookie("user", value=user.email)
+        #resp.set_cookie("user", value=user.email)
         return resp
 
+    if next_page is None:
+        return render_template("frontend/user/login.html", form=form, title="Log in")
+
     return render_template("frontend/user/login.html", form=form, title="Log in", next=next_page)
+
 
 
 @bp.route("/logout")
@@ -179,8 +186,9 @@ def logout():
     if request.method == "GET" and current_user.is_authenticated == False:
         return redirect(url_for("sitefe.index"))
     logout_user()
+
     resp = make_response(redirect(url_for("sitefe.index")))
-    resp.set_cookie("user", "", expires=0)
+    #resp.set_cookie("user", "", expires=0)
     flash("Succesfully logout out.", "positive")
     return resp
 
@@ -189,8 +197,8 @@ def logout():
 @login_required
 def profile(id):
 
-    form_edit_profile = user_forms.FormEditProfile()
-    form_change_password = user_forms.FormChangePassword()
+    form_edit_profile = FormEditProfile()
+    form_change_password = FormChangePassword()
     user = User.query.filter_by(email=current_user.email).first()
 
     if request.method == "GET":
@@ -249,7 +257,7 @@ def forgot():
     if request.method == "GET" and current_user.is_authenticated:
         return redirect(url_for("sitefe.index"))
 
-    form = user_forms.FormForgot()
+    form = FormForgot()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
@@ -288,10 +296,6 @@ def forgot():
 @bp.route("/reset/<token>", methods=["GET", "POST"])
 def reset(token):
 
-    # can not reset if already logged in
-    if request.method == "GET" and current_user.is_authenticated:
-        return redirect(url_for("sitefe.index"))
-
     try:
         user = User.query.filter_by(token=token).first()
     except Exception as err:
@@ -302,7 +306,7 @@ def reset(token):
     if not user:
         abort(404)
 
-    form = user_forms.FormReset()
+    form = FormReset()
     if form.validate_on_submit():
 
         if user:

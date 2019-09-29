@@ -1,9 +1,32 @@
 {% extends "backend/layout.html" %}
 
-{% block admin_nav %}
-  <li class="active"><a href="{{ url_for('userbe.index') }}">User Management</a></li>
-{% endblock %}
+{% block modules %}
 
-{% block admin_nav_mobile %}
-  <li class="active"><a href="{{ url_for('userbe.index') }}">User Management</a></li>
+<div class="container">
+    <div class="card-panel deep-orange lighten-5">
+        <div class="row">
+            <a href="{{ url_for('userbe.index') }}">
+                <div class="col s3 m4 l3 center hoverable">
+                    <div class="icon-block">
+                        <h2 class="light-blue-text">
+                            <i class="material-icons medium yellow-text text-darken-4">donut_large</i>
+                        </h2>
+                    </div>
+                    <span>USER</span>
+                </div>
+            </a>
+            <a href="{{ url_for('sitebe.index') }}">
+                <div class="col s3 m4 l3 center hoverable">
+                    <div class="icon-block">
+                        <h2 class="light-blue-text">
+                            <i class="material-icons medium">donut_small</i>
+                        </h2>
+                    </div>
+                    <span>SITE</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

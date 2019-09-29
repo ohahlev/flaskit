@@ -14,7 +14,15 @@ import random, string
 import app
 
 
+API_EMAIL = "api"
+API_PASSWORD = "4p1"
+
+# article
+ABOUT = "ABOUT"
+CONTACT = "CONTACT"
+
 # role
+API = "API"
 ADMIN = "ADMIN"
 USER = "USER"
 

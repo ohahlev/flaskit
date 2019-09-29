@@ -1,18 +1,17 @@
 from sqlalchemy import (
-    Table, Column, Integer, String, Boolean,
-    ForeignKey, DateTime, or_, and_, text
+    Column, Integer, String, DateTime,
+    Boolean, or_, and_, text
 )
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask_login import UserMixin
-from app import db, bcrypt, util
-from sqlalchemy.sql import func
-
-
-# between use and role
-user_role = Table("user_role", db.Model.metadata,
-                  Column("user_id", Integer, ForeignKey("user.id")),
-                  Column("role_id", Integer, ForeignKey("role.id")))
+from itsdangerous import (
+    TimedJSONWebSignatureSerializer as Serializer,
+    BadSignature, SignatureExpired)
+from app.models import user_role
+from app.models.role import Role
+from app import app, db, bcrypt, util
 
 
 class User(db.Model, UserMixin):
@@ -35,6 +34,32 @@ class User(db.Model, UserMixin):
 
     roles = relationship("Role", secondary=user_role, back_populates="users", order_by="Role.name")
 
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None  # valid token, but expired
+        except BadSignature:
+            return None  # invalid token
+        user = User.query.get(data['id'])
+        return user
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'phone': self.phone,
+            'email': self.email,
+            'photo': self.photo,
+            'roles': ([r.serialize() for r in self.roles])
+        }
+
     @hybrid_property
     def password(self):
         return self._password
@@ -53,6 +78,10 @@ class User(db.Model, UserMixin):
         role = next((x for x in self.roles if x.name == util.ADMIN), None)
         return role is not None
 
+    def is_api(self):
+        role = next((x for x in self.roles if x.name == util.API), None)
+        return role is not None
+
     @staticmethod
     def get_confirmeds():
         return [True, False]
@@ -65,9 +94,9 @@ class User(db.Model, UserMixin):
     def search(empty, sorted_by, sorted_as, per_page, page, name_to_filter, email_to_filter,
                phone_to_filter):
 
-        name_clause = or_(User.name.like("%{0}%".format(name_to_filter))).self_group()
-        email_clause = or_(User.email.like("%{0}%".format(email_to_filter))).self_group()
-        phone_clause = or_(User.phone.like("%{0}%".format(phone_to_filter))).self_group()
+        name_clause = or_(User.name.ilike("%{0}%".format(name_to_filter))).self_group()
+        email_clause = or_(User.email.ilike("%{0}%".format(email_to_filter))).self_group()
+        phone_clause = or_(User.phone.ilike("%{0}%".format(phone_to_filter))).self_group()
 
         clause_args = []
 
@@ -91,15 +120,15 @@ class User(db.Model, UserMixin):
     def advance_search(empty, sorted_by, sorted_as, per_page, page, id_to_filter, name_to_filter, email_to_filter,
                        phone_to_filter, confirmed_to_filter, deleted_to_filter, role_to_filter):
 
-        roles = [x for x in Role.query.filter(Role.name.like("%{0}%".format(role_to_filter.upper()))).all()]
+        roles = [x for x in Role.query.filter(Role.name.ilike("%{0}%".format(role_to_filter.upper()))).all()]
         users = []
         if len(roles) > 0:
             users = [x.users for x in roles][0]
 
         id_clause = and_(User.id == id_to_filter).self_group()
-        name_clause = and_(User.name.like("%{0}%".format(name_to_filter))).self_group()
-        email_clause = and_(User.email.like("%{0}%".format(email_to_filter))).self_group()
-        phone_clause = and_(User.phone.like("%{0}%".format(phone_to_filter))).self_group()
+        name_clause = and_(User.name.ilike("%{0}%".format(name_to_filter))).self_group()
+        email_clause = and_(User.email.ilike("%{0}%".format(email_to_filter))).self_group()
+        phone_clause = and_(User.phone.ilike("%{0}%".format(phone_to_filter))).self_group()
         confirmed_clause = and_(User.confirmed == confirmed_to_filter).self_group()
         deleted_clause = and_(User.deleted == deleted_to_filter).self_group()
         role_clause = and_(User.id.in_([x.id for x in users])).self_group()
@@ -133,20 +162,4 @@ class User(db.Model, UserMixin):
             .paginate(page, per_page, False)
 
         return query
-
-
-class Role(db.Model):
-
-    __tablename__ = "role"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(32))
-    icon = Column(String(32))
-    deleted = Column(Boolean, default=False)
-
-    users = relationship("User", secondary=user_role, back_populates="roles")
-
-    @staticmethod
-    def list():
-        return Role.query.order_by(Role.id.asc()).all()
 

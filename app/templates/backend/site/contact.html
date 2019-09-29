@@ -1,0 +1,24 @@
+{% extends "backend/site/layout.html" %}
+
+{% block content %}
+
+<div class="col s12">
+    <nav>
+        <div class="nav-wrapper green">
+            <span class="brand-logo center">Edit Contact</span>
+        </div>
+    </nav>
+    <div class="card-panel">
+        <form action="{{ url_for('sitebe.edit_article', type='contact') }}"
+              method="post" class="form-edit-contact">
+            {{ m.render_field(form.phone1) }}
+            {{ m.render_field(form.phone2) }}
+            {{ m.render_field(form.email) }}
+            {{ m.render_text_area(form.text) }}
+            {{ form.csrf_token }}
+            <button class="btn btn-submit-edit-contact" type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

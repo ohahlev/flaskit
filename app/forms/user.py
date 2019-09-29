@@ -7,17 +7,17 @@ from wtforms.validators import (
     DataRequired, Length, Email, Optional,
     EqualTo
 )
-from app.models import User
+from app.models.user import User
 from app.util import Unique
 
 
 class FormForgot(FlaskForm):
-    
+
     email = StringField(validators=[DataRequired(), Email()], description="email")
 
 
 class FormReset(FlaskForm):
-    
+
     password = PasswordField(validators=[
         DataRequired(), Length(min=6),
         EqualTo("confirm", message="Passwords must match.")
@@ -26,7 +26,7 @@ class FormReset(FlaskForm):
 
 
 class FormLogin(FlaskForm):
-    
+
     email = StringField(validators=[DataRequired(), Email()], description="email")
     password = PasswordField(validators=[DataRequired()],
                              description="lock")
@@ -34,7 +34,7 @@ class FormLogin(FlaskForm):
 
 
 class FormRegister(FlaskForm):
-    
+
     name = StringField(validators=[DataRequired(), Length(min=5, max=32)], description="account_circle")
     phone = StringField(validators=[Optional()], description="phone")
     email = StringField(validators=[DataRequired(), Email(), Unique(User, User.email,
@@ -67,7 +67,7 @@ class FormChangePassword(FlaskForm):
 
 
 class FormEditProfileForAdmin(FlaskForm):
-    
+
     name = StringField(validators=[DataRequired(), Length(min=5, max=32)], description="account_circle")
     phone = StringField(validators=[Optional()], description="phone")
     email = StringField(description="email")
@@ -79,7 +79,7 @@ class FormEditProfileForAdmin(FlaskForm):
 
 
 class FormCreateUser(FlaskForm):
-    
+
     name = StringField(validators=[DataRequired(), Length(min=5, max=32)], description="account_circle")
     phone = StringField(validators=[Optional()], description="phone")
     email = StringField(validators=[DataRequired(), Email(),

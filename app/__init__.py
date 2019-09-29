@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager
-from flask_json import FlaskJSON
 from app import util
 from flask_babel import Babel
 from flask_apscheduler import APScheduler
@@ -34,23 +33,22 @@ bcrypt = Bcrypt(app)
 moment = Moment(app)
 moment.init_app(app)
 
-FlaskJSON(app)
-
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 
 from app.logger_setup import logger
-from app.models import User
 from app.views import error
 
 from app.views.backend import (
-    user as userbe
+    user as userbe,
+    site as sitebe
 )
 from app.views.frontend import (
     site as sitefe, user as userfe
 )
 
+app.register_blueprint(sitebe.bp)
 app.register_blueprint(userbe.bp)
 
 app.register_blueprint(sitefe.bp)
@@ -62,6 +60,8 @@ login_manager.login_view = "userfe.login"
 
 app.add_url_rule("/uploads/<path:filename>", endpoint="uploads", view_func=app.send_static_file)
 
+
+from app.models.user import User
 
 @login_manager.user_loader
 def load_user(id):
