@@ -460,7 +460,7 @@
         </thead>
         <tbody class="card-panel">
         {% for user in users %}
-        <tr>
+        <tr class="clickable-row hoverable" data-href="{{ url_for('userbe.edit_user', id=user.id) }}">
             <td style="padding-left: 20px;">{{ user.id }}</td>
             <td>
                 {% if user.photo %}
@@ -473,7 +473,7 @@
             <td>{{ moment(user.date_created, local=True).format(config.DATE_TIME_FORMAT) }}</td>
             <td>{{ moment(user.last_updated, local=True).format(config.DATE_TIME_FORMAT) }}</td>
             <td>
-                <a href="{{ url_for('userbe.edit_user', id=user.id) }}">{{ user.name }}</a>
+                {{ user.name }}
             </td>
             <td>{{ user.email|truncate(config.MAX_TRUNCATE)|safe }}</td>
             <td>
@@ -559,6 +559,13 @@
 </div>
 
 <script>
+
+    $(".clickable-row").click(function (evt) {
+        if((evt.target.nodeName !== "I") && (evt.target.nodeName !== "BUTTON")) {
+            window.location = $(this).data("href");
+        }
+    });
+
     $(".btn-yes").click(function (evt) {
 
         var url = evt.target.attributes[1].value;
