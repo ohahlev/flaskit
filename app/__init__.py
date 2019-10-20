@@ -8,6 +8,8 @@ from flask_login import LoginManager
 from app import util
 from flask_babel import Babel
 from flask_apscheduler import APScheduler
+from flask_session import Session, SqlAlchemySessionInterface
+import pprint
 
 class ReverseProxied(object):
     def __init__(self, app):
@@ -19,23 +21,30 @@ class ReverseProxied(object):
             environ['wsgi.url_scheme'] = scheme
         return self.app(environ, start_response)
 
-
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 
+pprint(app.wsgi_app)
+
 app.config.from_object("app.config")
-db = SQLAlchemy(app)
-mail = Mail(app)
+
 app.config["DEBUG_TB_TEMPLATE_EDITOR_ENABLED"] = True
 app.config["DEBUG_TB_PROFILER_ENABLED"] = True
 toolbar = DebugToolbarExtension(app)
+
+db = SQLAlchemy(app)
+mail = Mail(app)
 bcrypt = Bcrypt(app)
+
 moment = Moment(app)
 moment.init_app(app)
 
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
+
+SqlAlchemySessionInterface(app, db, "sessions", "preview_")
+Session(app)
 
 from app.logger_setup import logger
 from app.views import error

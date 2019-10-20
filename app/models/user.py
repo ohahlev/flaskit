@@ -32,7 +32,8 @@ class User(db.Model, UserMixin):
     date_created = Column(DateTime(timezone=False), server_default=func.now())
     last_updated = Column(DateTime(timezone=False), server_default=func.now(), onupdate=func.now())
 
-    roles = relationship("Role", secondary=user_role, back_populates="users", order_by="Role.name")
+    roles = relationship("Role", secondary=user_role, back_populates="users", order_by="Role.name",
+                         cascade="all,delete")
 
     def generate_auth_token(self, expiration=600):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)

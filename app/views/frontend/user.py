@@ -24,7 +24,17 @@ ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 bp = Blueprint("userfe", __name__, url_prefix="/user")
 
 
-def expire_token(token):
+def expire_confirm_email_token(token):
+    user = User.query.filter_by(token=token).first()
+    if user:
+        try:
+            db.session.delete(user)
+            print("deleted user: {}".format(user.name))
+        except Exception as err:
+            logger.exception(err)
+
+
+def expire_reset_password_token(token):
     user = User.query.filter_by(token=token).first()
     if user:
         try:
@@ -78,7 +88,7 @@ def register():
             now = datetime.now()
             now_plus_timeout = now + timedelta(minutes=util.TOKEN_TIMEOUT)
 
-            app.apscheduler.add_job(func=expire_token, trigger='date', next_run_time=str(now_plus_timeout),
+            app.apscheduler.add_job(func=expire_confirm_email_token, trigger='date', next_run_time=str(now_plus_timeout),
                                     args=[token], id=util.generate_random(5))
 
             flash("Check your email to confirm. You've got {} minutes before the link expires"
@@ -90,6 +100,14 @@ def register():
             logger.exception(err)
             flash("can not register at this moment", "negative")
             return redirect(url_for("userfe.register"))
+        finally:
+            print("now in finally")
+            user = User.query.filter_by(email=form.email.data.strip()).first()
+            if user:
+                print("found ghost user")
+                db.session.delete(user)
+                db.session.commit()
+
     return render_template("frontend/user/register.html", form=form, title="Register")
 
 @bp.route("/confirm/<token>", methods=["GET"])
@@ -281,7 +299,7 @@ def forgot():
             now = datetime.now()
             now_plus_timeout = now + timedelta(minutes=util.TOKEN_TIMEOUT)
 
-            app.apscheduler.add_job(func=expire_token, trigger='date', next_run_time=str(now_plus_timeout),
+            app.apscheduler.add_job(func=expire_reset_password_token, trigger='date', next_run_time=str(now_plus_timeout),
                                     args=[token], id=util.generate_random(5))
 
             flash("Check your emails to reset your password. You've got {} minutes before the link expires"

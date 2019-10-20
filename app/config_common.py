@@ -1,7 +1,9 @@
 import os
 
 # application name
-APP_NAME = "AH WEB"
+APP_NAME = "FLASKIT"
+
+APP_NAME_URL = ""
 
 # app name second line
 APP_NAME_SECOND_LINE = "May god blesses you all"
@@ -14,6 +16,9 @@ TIMEZONE = "Asia/Bangkok"
 
 # Secret key for generating tokens
 SECRET_KEY = "FLASKIT"
+
+# session
+SESSION_TYPE = "sqlalchemy"
 
 # salt
 SALT_RESET_PASSWORD = "TO-RESET-PASSWORD"

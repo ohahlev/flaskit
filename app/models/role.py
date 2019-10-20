@@ -15,7 +15,8 @@ class Role(db.Model):
     icon = Column(String(32))
     deleted = Column(Boolean, default=False)
 
-    users = relationship("User", secondary=user_role, back_populates="roles")
+    users = relationship("User", secondary=user_role, back_populates="roles",
+                         cascade="all,delete")
 
     def serialize(self):
         return {
